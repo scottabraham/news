@@ -5,18 +5,20 @@ import SourceSelector from './SourceSelector';
 
 const apiKey = 'c8c1496ed81940f3a1bda6cd62842212';
 const defaultSource = 'cbc-news';
-const onClick = (val) =>{
-    this.setState({
-        selectedSource: val
-    })
-}
 
 class NewsFeed extends Component{
+  
     render(){
+
         let articles;
         let sources;
         let selectedSource;
         
+        const handleSelectedSource = (selectedSource) => {
+            this.setState({source: selectedSource})
+            this.updateNews(selectedSource);
+        }
+
         if (this.state !== null && this.state.newsfeed !== null && this.state.newsfeed.articles !== null){
             articles = this.state.newsfeed.articles;
         }
@@ -29,12 +31,11 @@ class NewsFeed extends Component{
             selectedSource = this.state.selectedSource;
         }
 
-
         return(
         
         <div>
             <h1>News</h1>
-            <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onClick={() => this.onClick}></SourceSelector>
+            <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
             <Articles articles={articles}></Articles>
         </div>
         )

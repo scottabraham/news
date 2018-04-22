@@ -2,6 +2,14 @@ body{
     background-color: lightgrey;
 }
 
+h1{
+    display: inline-block;
+}
+.source-selector{
+    margin-left: 20px;
+    display: inline-block;
+}
+
 .article img{
     width: 400px;
     height: 200px;
