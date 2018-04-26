@@ -2,11 +2,19 @@
 import React, { Component } from 'react';
 import Articles from './Articles'
 import SourceSelector from './SourceSelector';
+import Loader from './Loader'
 
 const apiKey = 'c8c1496ed81940f3a1bda6cd62842212';
 const defaultSource = 'cbc-news';
 
 class NewsFeed extends Component{
+
+    constructor(props){
+        super(props);
+        this.state = {
+            isLoading: true
+        }
+    }
   
     render(){
 
@@ -19,26 +27,32 @@ class NewsFeed extends Component{
             this.updateNews(selectedSource);
         }
 
-        if (this.state !== null && this.state.newsfeed !== null && this.state.newsfeed.articles !== null){
-            articles = this.state.newsfeed.articles;
-        }
+        if (this.state !== null && this.state.isLoading !== null && this.state.isLoading===true){
+            return(
+                <Loader></Loader>
+            )
+        } else {
+            if (this.state !== null && this.state.newsfeed !== null && this.state.newsfeed.articles !== null){
+                articles = this.state.newsfeed.articles;
+            }
 
-        if (this.state !== null && this.state.sources !== null){
-            sources = this.state.sources;
-        }
+            if (this.state !== null && this.state.sources !== null){
+                sources = this.state.sources;
+            }
 
-        if (this.state !== null && this.state.selectedSource !== null){
-            selectedSource = this.state.selectedSource;
-        }
+            if (this.state !== null && this.state.selectedSource !== null){
+                selectedSource = this.state.selectedSource;
+            }
 
-        return(
-        
-        <div>
-            <h1>News</h1>
-            <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
-            <Articles articles={articles}></Articles>
-        </div>
-        )
+            return(
+            
+            <div>
+                <h1>News</h1>
+                <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
+                <Articles articles={articles}></Articles>
+            </div>
+            )
+        }
     }
 
     componentDidMount(){
@@ -51,11 +65,15 @@ class NewsFeed extends Component{
     }
 
     async updateNews(source = defaultSource){
+        this.setState({
+            isLoading: true
+        })
         const res = await fetch('https://newsapi.org/v2/top-headlines?sources='+source+'&apiKey='+apiKey)
         const json = await res.json();
         
         this.setState({
-            newsfeed: json
+            newsfeed: json,
+            isLoading: false
         });
     }
 
