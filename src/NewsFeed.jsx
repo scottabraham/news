@@ -40,14 +40,14 @@ class NewsFeed extends Component{
                 sources = this.state.sources;
             }
 
-            if (this.state !== null && this.state.selectedSource !== null){
-                selectedSource = this.state.selectedSource;
+            if (this.state !== null && this.state.source !== null){
+                selectedSource = this.state.source;
             }
 
             return(
             
             <div>
-                <h1>News</h1>
+                <h1>Scotts News</h1>
                 <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
                 <Articles articles={articles}></Articles>
             </div>

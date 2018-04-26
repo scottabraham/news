@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 export default function SourceSelector(props){
    
@@ -15,12 +15,12 @@ export default function SourceSelector(props){
     }
     else{
 
-        const sourcesOptions = props.sources.map(source=>{
-            return <option value={source.id} selected={source.id===props.selectedSource}>{source.name}</option>
+        const sourcesOptions = props.sources.map((source, i)=>{
+            return <option key={i} value={source.id}>{source.name}</option>
         })
 
         return (
-            <select id='sourceSelector' className='source-selector' onChange={()=> handleChange(props)}>{sourcesOptions}</select>
+            <select id='sourceSelector' className='source-selector' value={props.selectedSource} onChange={()=> handleChange(props)}>{sourcesOptions}</select>
         )
     }
 }
