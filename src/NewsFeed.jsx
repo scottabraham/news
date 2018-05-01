@@ -27,20 +27,21 @@ class NewsFeed extends Component{
             this.updateNews(selectedSource);
         }
 
-        if (this.state !== null && this.state.isLoading !== null && this.state.isLoading===true){
-            return(
-                <Loader></Loader>
-            )
-        } else {
-            if (this.state !== null && this.state.newsfeed !== null && this.state.newsfeed.articles !== null){
+        const loader = <Loader></Loader>
+
+        if(this.state){
+            if (this.state.isLoading !== null && this.state.isLoading===true){
+                return loader;
+            }
+            if (this.state.newsfeed !== null && this.state.newsfeed.articles !== null){
                 articles = this.state.newsfeed.articles;
             }
 
-            if (this.state !== null && this.state.sources !== null){
+            if (this.state.sources !== null){
                 sources = this.state.sources;
             }
 
-            if (this.state !== null && this.state.source !== null){
+            if (this.state.source !== null){
                 selectedSource = this.state.source;
             }
 
@@ -52,6 +53,10 @@ class NewsFeed extends Component{
                 <Articles articles={articles}></Articles>
             </div>
             )
+
+        } else {
+            // state not initialized yet....
+            return loader;
         }
     }
 

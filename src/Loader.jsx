@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Loader (){
     return(
-        <div>
+        <div id="cover">
             <span>Loading...</span>
             <div className="loader"></div>
         </div>
