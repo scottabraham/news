@@ -2,6 +2,22 @@ body{
     background-color: #fff;
 }
 
+.titleBar{
+     margin: 0 auto;
+     width: 80%; 
+     background-color: #000;
+     color: #fff;
+     padding: 10px;
+}
+
+.articles{
+    margin: 0 auto;
+    width: 80%; 
+    padding: 10px;
+    border-left: #cacaca 1px solid;
+    border-right: #cacaca 1px solid;
+}
+
 h1{
     display: inline-block;
 }
@@ -10,9 +26,17 @@ h1{
     display: inline-block;
 }
 
+.article{
+    border-bottom: #cacaca 1px solid;
+}
+
 .article img{
     width: 400px;
     height: 200px;
+}
+
+.article a:link {
+    color: darkgrey;
 }
 
 .loader{
@@ -20,6 +44,9 @@ h1{
     background-repeat: no-repeat;
     height: 100px;
     width: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
 }
 
 #cover{

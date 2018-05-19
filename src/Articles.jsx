@@ -8,8 +8,8 @@ export default function Articles(props){
         const articleList = props.articles.map( (article, i) => {
             return (
                 <div className='article' key={i}>
-                    <a href={article.url}>{article.url}</a>
                     <h2>{article.title}</h2>
+                    <p><a href={article.url}>{article.url}</a></p>
                     <a href={article.url}> <img src={article.urlToImage} alt={article.title}></img></a>
                     <p>{article.description}</p>
                 </div>

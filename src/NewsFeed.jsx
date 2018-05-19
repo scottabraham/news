@@ -48,9 +48,13 @@ class NewsFeed extends Component{
             return(
             
             <div>
-                <h1>Scotts News</h1>
-                <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
-                <Articles articles={articles}></Articles>
+                <div className="titleBar">
+                    <h1>Scotts News</h1>
+                    <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
+                </div>
+                <div className="articles">
+                    <Articles articles={articles}></Articles>
+                </div>
             </div>
             )
 
