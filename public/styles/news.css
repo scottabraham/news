@@ -40,7 +40,7 @@ h1{
 }
 
 .loader{
-    background-image: url('./images/loading.gif');
+    background-image: url('../images/loading.gif');
     background-repeat: no-repeat;
     height: 100px;
     width: 100px;

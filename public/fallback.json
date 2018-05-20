@@ -1,0 +1,10 @@
+{
+    "articles" : [
+        {
+            "title" : "Dog fails to fetch articles, finds stick instead",
+            "url": "",
+            "urlToImage": "images/fetch_dog.jpg",
+            "description": "Try this channel later when you're online"
+        }
+    ]
+}
