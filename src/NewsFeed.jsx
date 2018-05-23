@@ -47,12 +47,12 @@ class NewsFeed extends Component{
 
             return(
             
-            <div>
-                <div className="titleBar">
+            <div className="container-fluid">
+                <div className="titleBar col-12">
                     <h1>Scotts News</h1>
                     <SourceSelector sources={sources} selectedSource={selectedSource || defaultSource} onChange={(val) => handleSelectedSource(val)}></SourceSelector>
                 </div>
-                <div className="articles">
+                <div className="row align-items-center">
                     <Articles articles={articles}></Articles>
                 </div>
             </div>
