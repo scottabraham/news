@@ -3,37 +3,16 @@ body{
 }
 
 .titleBar{
-     margin: 0 auto;
-     width: 80%; 
      background-color: #000;
      color: #fff;
      padding: 10px;
-}
-
-.articles{
-    margin: 0 auto;
-    width: 80%; 
-    padding: 10px;
-    border-left: #cacaca 1px solid;
-    border-right: #cacaca 1px solid;
-}
-
-h1{
-    display: inline-block;
-}
-.source-selector{
-    margin-left: 20px;
-    display: inline-block;
+     margin-top: 8px;
 }
 
 .article{
     border-bottom: #cacaca 1px solid;
 }
 
-.article img{
-    width: 400px;
-    height: 200px;
-}
 
 .article a:link {
     color: darkgrey;
