@@ -1,49 +1,105 @@
-const staticAssets = [
-    './',
-    './fallback.json',
-    './images/loading.gif',
-    './images/fetch_dog.jpg',
-    './styles/news.css',
-    './static/js/bundle.js'
-];
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js');
 
-self.addEventListener('install', async event=>{
-    console.log('Service Worker installed')
-
-    const cache = await caches.open('scott-news-cache');
-    cache.addAll(staticAssets);
-
-})
-
-self.addEventListener('fetch', event=>{
-    console.log('Service Worker has intercepted a request')
-    const req = event.request;
-    const url = new URL(req.url);
-
-    if(url.origin === location.origin){
-        event.respondWith(cacheFirst(req));
-    } else {
-        event.respondWith(networkFirst(req));
-    }
-    
-})
-
-async function cacheFirst(req){
-    const cachedResponse = await caches.match(req);
-    return cachedResponse || fetch(req);
+if (workbox) {
+  console.log(`Yay! Workbox is loaded 🎉`);
+} else {
+  console.log(`Boo! Workbox didn't load 😬`);
 }
 
-async function networkFirst(req){
-    const cache = await caches.open('news-articles');
+// Assume that this URL is precached.
+const FALLBACK_HEADLINE_URL = './fallback.json';
 
-    try {
-        const res = await fetch(req);
-        cache.put(req, res.clone());
-        return res;
-        
-    } catch (error) {
-        const cachedResponse = await cache.match(req);
-        return cachedResponse || await caches.match('./fallback.json');
+workbox.precaching.precacheAndRoute([
+    FALLBACK_HEADLINE_URL, 
+    './images/loading.gif', 
+    './images/fetch_dog.jpg'
+
+]);
+
+const headlinesHandler = workbox.strategies.cacheFirst({
+    cacheName: 'headlines-cache',
+        plugins: [
+            new workbox.cacheableResponse.Plugin({
+            statuses: [0, 200],
+            }),
+            new workbox.expiration.Plugin({
+              // Cache only 20 images per time
+              maxEntries: 20,
+              // Cache for a maximum of 1 hour
+              maxAgeSeconds: 60 * 60,
+            }), 
+        ]
     }
+);
 
-}
+workbox.routing.registerRoute(new RegExp('https://newsapi.org/v2/top-headlines.*'), ({event}) => {
+  return headlinesHandler.handle({event})
+    .catch(() => caches.match(FALLBACK_HEADLINE_URL));
+});
+
+workbox.routing.registerRoute(
+    new RegExp('https://newsapi.org/v2/sources.*'),
+    workbox.strategies.cacheFirst({
+      cacheName: 'sources-cache',
+      plugins: [
+        new workbox.cacheableResponse.Plugin({
+          statuses: [0, 200],
+        })
+      ]
+    })
+  );
+
+workbox.routing.registerNavigationRoute('/index.html');
+
+workbox.routing.registerRoute(
+    new RegExp('.*\.js'),
+    workbox.strategies.networkFirst()
+  );
+  
+  workbox.routing.registerRoute(
+    // Cache CSS files
+    /.*\.css/,
+    // Use cache but update in the background ASAP
+    workbox.strategies.staleWhileRevalidate({
+      // Use a custom cache name
+      cacheName: 'css-cache',
+    })
+  );
+      
+  workbox.routing.registerRoute(
+    // Cache image files
+    /.*\.(?:png|jpg|jpeg|svg|gif|ico)/,
+    // Use the cache if it's available
+    workbox.strategies.cacheFirst({
+      // Use a custom cache name
+      cacheName: 'image-cache',
+      plugins: [
+        new workbox.expiration.Plugin({
+          // Cache only 20 images per time
+          maxEntries: 20,
+          // Cache for a maximum of a week
+          maxAgeSeconds: 7 * 24 * 60 * 60,
+        }), 
+        new workbox.cacheableResponse.Plugin({
+              statuses: [0, 200],
+            })
+      ],
+    })
+  );
+
+  // btnAdd.addEventListener('click', (e) => {
+  //   // hide our user interface that shows our A2HS button
+  //   btnAdd.style.display = 'none';
+  //   // Show the prompt
+  //   deferredPrompt.prompt();
+  //   // Wait for the user to respond to the prompt
+  //   deferredPrompt.userChoice
+  //     .then((choiceResult) => {
+  //       if (choiceResult.outcome === 'accepted') {
+  //         console.log('User accepted the A2HS prompt');
+  //       } else {
+  //         console.log('User dismissed the A2HS prompt');
+  //       }
+  //       deferredPrompt = null;
+  //     });
+  // });
