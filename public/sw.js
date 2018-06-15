@@ -6,9 +6,10 @@ if (workbox) {
   console.log(`Boo! Workbox didn't load 😬`);
 }
 
-// Assume that this URL is precached.
+// What to show if no cached news
 const FALLBACK_HEADLINE_URL = './fallback.json';
 
+// lets pre-cache some stuff to do with displaying a fallback page
 workbox.precaching.precacheAndRoute([
     FALLBACK_HEADLINE_URL, 
     './images/loading.gif', 
@@ -16,6 +17,11 @@ workbox.precaching.precacheAndRoute([
 
 ]);
 
+// How are we going to handle requests for Headlines?
+// Strategy: Cache First
+// Cache Name: headlines-cache
+// Cache Size: 200
+// Cache Expiry: 1 hour
 const headlinesHandler = workbox.strategies.cacheFirst({
     cacheName: 'headlines-cache',
         plugins: [
@@ -23,8 +29,8 @@ const headlinesHandler = workbox.strategies.cacheFirst({
             statuses: [0, 200],
             }),
             new workbox.expiration.Plugin({
-              // Cache only 20 images per time
-              maxEntries: 20,
+              // Cache only 200 headlines
+              maxEntries: 200,
               // Cache for a maximum of 1 hour
               maxAgeSeconds: 60 * 60,
             }), 
@@ -32,11 +38,18 @@ const headlinesHandler = workbox.strategies.cacheFirst({
     }
 );
 
+// We need to register our headlines route with workbox and tell it what to 
+// do if there's not a cache hit...
 workbox.routing.registerRoute(new RegExp('https://newsapi.org/v2/top-headlines.*'), ({event}) => {
   return headlinesHandler.handle({event})
     .catch(() => caches.match(FALLBACK_HEADLINE_URL));
 });
 
+// Cache the list of sources that appear in the drop-down
+// Strategy: Cache First (Cache Falling Back to Network)
+// Cache Name: sources-cache
+// Cache Size: -
+// Cache Expiry: never!
 workbox.routing.registerRoute(
     new RegExp('https://newsapi.org/v2/sources.*'),
     workbox.strategies.cacheFirst({
@@ -49,13 +62,21 @@ workbox.routing.registerRoute(
     })
   );
 
-workbox.routing.registerNavigationRoute('/index.html');
-
+// Cache JavaScript Files
+// Strategy: Network First
+// Cache Name: - let workbox take care of it..
+// Cache Size: ??
+// Cache Expiry: ??
 workbox.routing.registerRoute(
     new RegExp('.*\.js'),
     workbox.strategies.networkFirst()
   );
   
+// Cache CSS
+// Strategy: staleWhileRevalidate
+// Cache Name: css-cache
+// Cache Size: ??
+// Cache Expiry: ??
   workbox.routing.registerRoute(
     // Cache CSS files
     /.*\.css/,
@@ -66,6 +87,11 @@ workbox.routing.registerRoute(
     })
   );
       
+  // Cache Images
+// Strategy: cacheFirst (Cache Falling Back to Network)
+// Cache Name: image-cache
+// Cache Size: 20
+// Cache Expiry: 1 week
   workbox.routing.registerRoute(
     // Cache image files
     /.*\.(?:png|jpg|jpeg|svg|gif|ico)/,
@@ -87,19 +113,5 @@ workbox.routing.registerRoute(
     })
   );
 
-  // btnAdd.addEventListener('click', (e) => {
-  //   // hide our user interface that shows our A2HS button
-  //   btnAdd.style.display = 'none';
-  //   // Show the prompt
-  //   deferredPrompt.prompt();
-  //   // Wait for the user to respond to the prompt
-  //   deferredPrompt.userChoice
-  //     .then((choiceResult) => {
-  //       if (choiceResult.outcome === 'accepted') {
-  //         console.log('User accepted the A2HS prompt');
-  //       } else {
-  //         console.log('User dismissed the A2HS prompt');
-  //       }
-  //       deferredPrompt = null;
-  //     });
-  // });
+  // Tell workbox where to go...
+  workbox.routing.registerNavigationRoute('/index.html');
